@@ -1,0 +1,45 @@
+#include <iostream>
+#include <unordered_map>
+using namespace std;
+
+int N, S;
+int A[100000];
+
+int cal(int l, int r){
+    unordered_map<int, int> cnt;
+    for(int i=l; i<=r; ++i){
+        int type=A[i];
+        cnt[type]++;
+    }
+    int ret=0;
+    for(auto c:cnt){
+        if(c.second>S)
+            continue;
+        ret+=c.second;
+    }
+    return ret;
+}
+int solve(){
+    int ret=0;
+    for(int i=0; i<N; ++i){
+        for(int j=i+1; j<N; ++j){
+            ret=max(ret, cal(i, j));
+        }
+    }
+    return ret;
+}
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    int T;
+    cin>>T;
+    for(int t=1; t<=T; ++t){
+        cin>>N>>S;
+        for(int i=0; i<N; ++i){
+            cin>>A[i];
+        }
+        cout<<"Case #"<<t<<": "<<solve()<<'\n';
+    }
+    //std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
