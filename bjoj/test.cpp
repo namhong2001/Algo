@@ -1,90 +1,62 @@
-#include <stdio.h>
 #include <vector>
-#include <queue>
-#include <algorithm>
-#include <memory.h>
 #include <iostream>
-using namespace std;
+#include <cstring>
+#include <queue>
 
-#define MAX_V 150
+using namespace std ;
 
-struct SHARK {
-	int size, spd, itg;
-};
+int N, M, K;
+int cache[100][1<<14];
+vector<int> JEWELS;
+vector<vector<pair<int, int>>> adj;
 
-int V; // 정점수
-vector<int> G[MAX_V]; //그래프의 인접리스트 표현
-int match[MAX_V]; // 매칭페어
-bool used[MAX_V]; // DFS 이미 조사했는지 플레그
+int solve(int here, int jewel){
+    int &ret=cache[here][jewel];
+    if(ret!=-1)
+        return ret;
+    ret=0;
+    int nJewel=__builtin_popcount(jewel);
+    int isJewel=JEWELS[here];
 
-void add(int u, int v) {
-	G[u].push_back(v);
+    for(auto p:adj[here]){
+        int there=p.first, cost=p.second;
+        if(nJewel>cost)
+            continue;
+        ret=max(ret, solve(there, jewel));
+        if(isJewel!=-1 && !(jewel & (1<<isJewel)) && nJewel+1<=cost){
+            ret=max(ret, solve(there, (jewel | (1<<isJewel)))+1);
+        }
+    }
+    return ret;
 }
+int main(){
+    cin>>N>>M>>K;
+    adj.resize(N);
+    JEWELS=vector<int>(N, -1);
+    memset(cache, -1, sizeof(cache));
+    int cnt=0;
+    for(int i=0; i<K; ++i){
+        int index;
+        cin>>index; index--;
+        JEWELS[index]=cnt++;
+    }
 
-bool dfs(int v) {
-	used[v] = 1;
-	for (int i = 0; i < G[v].size(); i++) {
-		int u = G[v][i], w = match[u];
-		if (w < 0 || !used[w] && dfs(w)) {
-			cerr << v << ' ' << u << endl;
-			match[v] = u;
-			match[u] = v;
-			return 1;
+    for(int i=0; i<M; ++i){
+        int a, b, c;
+        cin>>a>>b>>c;
+        a--; b--;
+        adj[a].emplace_back(b, c);
+        adj[b].emplace_back(a, c);
+    }
+
+    solve(0, 0); 
+	int ans = 0;
+	for (int i=0; i<1<<14; ++i) {
+		if (cache[0][i] != -1) {
+			ans = max(ans, __builtin_popcount(i)); 
 		}
-	}
-	return 0;
-}
-
-int BTM() {
-	int res = 0;
-	memset(match, -1, sizeof match);
-	int N = V/3;
-	for (int v = 0; v < 2*N; v++) {
-		if (match[v] < 0) {
-			memset(used, 0, sizeof(used));
-			if (dfs(v)){
-				res++;
-			}
-		}
-		else {
-			cerr << "passed" << endl;
-		}
-	}
-	for (int v=0; v<N*2; ++v) {	
-		if (match[v] != -1) cerr << v%N+1 << ' ' << match[v]%N+1 << endl;
-	}
-	return res;
-}
-
-int main()
-{
-	int n; scanf("%d", &n);
-	struct SHARK shark[50];
-	V = n * 3;
-
-	for (int i = 0; i < V; i++){
-		G[i].clear();
-		match[i] = 0;
-		used[i] = false;
-	}
-
-	for (int i = 0; i < n; i++) scanf("%d %d %d", &shark[i].size, &shark[i].spd, &shark[i].itg);
-	for (int i = 0; i < n; i++){
-		for (int j = 0; j < i; j++){
-			if (i == j) continue;
-			if (shark[i].size >= shark[j].size && shark[i].spd >= shark[j].spd && shark[i].itg >= shark[j].itg){
-				cerr << i << endl;
-				G[i].push_back(2 * n + j);
-				G[n + i].push_back(2 * n + j);
-			}
-			else if (shark[i].size <= shark[j].size && shark[i].spd <= shark[j].spd && shark[i].itg <= shark[j].itg){
-				G[j].push_back(2 * n + i);
-				G[n + j].push_back(2 * n + i);
-			}
-		}
-	}
-	cerr << "0 size " << G[0].size() << endl;
-
-	printf("%d\n", (n - BTM()));
-	return 0;
+	} 
+	if (JEWELS[0] != -1) ans++;
+	cout << ans << endl; 
+    return 0;
 }
