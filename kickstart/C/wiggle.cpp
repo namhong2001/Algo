@@ -5,9 +5,7 @@
 
 using namespace std;
 
-typedef pair<int,int> pii;
-
-
+typedef pair<int,int> pii; 
 
 int main() {
 	int T;
@@ -24,34 +22,34 @@ int main() {
 		pii here = {sx, sy}; 
 		string actions;
 		cin >> actions;
-		function<int(pair<int,int>,int)> find_next = [&](const pii &here, char dir) { 
+		function<int(const pii &, char)> find_next = [&](const pii &here, char dir) { 
 			if (dir == 'E') { 
-				int next = here.second+1; 
-				if (right.find({here.first, next}) != right.end()) {
+				if (right.find(here) != right.end()) {
+					int next = right[here];
 					return right[here] = find_next({here.first, next}, dir);
 				} else {
-					return next;
-				}
+					return here.second;
+				} 
 			} else if (dir == 'W') { 
-				int next = here.second-1; 
-				if (left.find({here.first, next}) != left.end()) {
+				if (left.find(here) != left.end()) {
+					int next = left[here];
 					return left[here] = find_next({here.first, next}, dir);
 				} else {
-					return next;
+					return here.second;
 				}
 			} else if (dir == 'N') { 
-				int next = here.first-1; 
-				if (up.find({next, here.second}) != up.end()) {
-					return up[here] = find_next({next, here.second}, dir);
+				if (up.find(here) != up.end()) {
+					int next = up[here];
+					return up[here] = find_next({next, here.second}, dir); 
 				} else {
-					return next;
+					return here.first;
 				}
 			} else if (dir == 'S') { 
-				int next = here.first+1; 
-				if (down.find({next, here.second}) != down.end()) {
+				if (down.find(here) != down.end()) {
+					int next = down[here];
 					return down[here] = find_next({next, here.second}, dir);
 				} else {
-					return next;
+					return here.first;
 				}
 			}
 		};
@@ -65,6 +63,11 @@ int main() {
 			} else if (action == 'S') {
 				here.first = down[here];
 			}
+			right[here] = here.second+1;
+			left[here] = here.second-1;
+			up[here] = here.first-1;
+			down[here] = here.first+1; 
+			
 			right[here] = find_next(here, 'E');
 			left[here] = find_next(here, 'W');
 			up[here] = find_next(here, 'N');
