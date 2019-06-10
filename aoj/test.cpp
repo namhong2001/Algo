@@ -1,27 +1,38 @@
 #include <iostream>
-#include <iterator>
-#include <list>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+#include <set>
 
-using namespace std;
-
-void circular_advance(list<int> &l, list<int>::iterator &it) {
-	advance(it, 1);
-	if (it == l.end()) it = l.begin();
-} 
+using namespace std; 
 
 int main() {
-	list<int> a;
-	a.push_back(1);
-	a.push_back(2);
-	a.push_back(3);
-	a.push_back(4);
-	auto it = a.begin();
-	for (int i=0; i<4; ++i) {
-		for (int j=0; j<3; ++j) {
-			circular_advance(a, it);
-		} 
-		cout << *it << endl;
+	cout << 1 << endl;
+	srand(time(nullptr));
+	vector<string> name = {
+		"aa", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at", "au", "av", "aw", "ax", "ay", "az",
+		"ba", "bb", "bc", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bk", "bl", "bm", "bn", "bo", "bp", "bq", "br", "bs", "bt", "bu", "bv", "bw", "bx"
+	};
+	int n = 40;
+	int m = 30;
+	cout << n << ' ' << m << endl;
+	for (int i=0; i<n; ++i) {
+		cout << name[i] << ' ';
 	}
-	return 0;
+	cout << endl;
+	for (int i=0; i<m; ++i) {
+		int cnt = rand()%(n-5);
+		set<int> s;
+		while (s.size() < cnt) {
+			int ith = rand()%n;
+			s.insert(ith);
+		}
+		cout << cnt << ' ';
+		for (int ith : s) {
+			cout << name[ith] << ' ';
+		}
+		cout << endl;
+	}
+	return 0; 
 }
 
