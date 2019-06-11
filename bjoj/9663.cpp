@@ -10,7 +10,6 @@ bool extract[30];
 int n; 
 
 int search(int x, int y) { 
-	//cerr << x << ' ' << y << ' ' << cnt << endl;
 	if (x == n-1) return 1;
 	int ret = 0; 
 	row[x] = true;
