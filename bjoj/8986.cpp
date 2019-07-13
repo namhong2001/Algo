@@ -1,36 +1,38 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <algorithm>
 
 using namespace std;
 
 typedef long long ll;
 
 int N;
+vector<ll> arr;
 
-ll get_moves(vector<ll> &arr, ll factor) {
-	ll ret = 0;
-	for (int i=0; i<N; ++i) {
-		ret += abs(arr[i] - factor*i);
+ll func(ll x) {
+	ll dist = 0;
+	for (int i=0; i<(int)arr.size(); ++i) {
+		dist += abs(i*x - arr[i]);
 	}
-	return ret;
+	return dist;
 }
-
 
 int main() {
 	cin >> N;
-	vector<ll> in(N); 
-	ll sum = 0;
-	ll divider = 0;
+	arr.resize(N);
 	for (int i=0; i<N; ++i) {
-		cin >> in[i];
-		sum += in[i];
-		divider += i;
+		cin >> arr[i];
 	} 
-	ll factor = roundl(1.0l*sum/divider);
-
-	ll ans = min({get_moves(in, factor-1), get_moves(in, factor), get_moves(in, factor+1)}); 
-	cout << ans << endl;
+	ll l = 0, r = arr[N-1];
+	while (l+2<r) {
+		ll a = (2*l+r)/3;
+		ll b = (l+2*r)/3;
+		if (func(a) > func(b)) {
+			l = a;
+		} else {
+			r = b;
+		}
+	} 
+	cout << func((l+r)/2) << endl;
 	return 0;
 } 
