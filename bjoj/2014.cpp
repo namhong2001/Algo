@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <set>
 
 using namespace std;
 
@@ -15,24 +16,30 @@ int main() {
 	cin >> K >> N;
 	vector<ll> primes(K); 
 	priority_queue<ll, vector<ll>, greater<ll>> pq;
+	set<ll> has;
+	ll pq_max = 0;
+	ll ans = 0; 
 	for (int i=0; i<K; ++i) {
 		cin >> primes[i];
 		pq.push(primes[i]); 
+		has.insert(primes[i]); 
+		pq_max = max(pq_max, primes[i]);
 	} 
-	ll ans = 0;
-	
 	while (N) {
-		ll cand = pq.top();
+		ans = pq.top();
 		pq.pop();
-		if (ans == cand) continue;
-		ans = cand; 
 		N--;
 		for (auto p : primes) {
-			ll next = ans * p;
-			if (next >= LIMIT) continue; 
+			ll next = ans * p; 
+			if (next > LIMIT) break;
+			if ((ll)pq.size() > N && next > pq_max) break; 
+			if (has.find(next) != has.end()) continue;
 			pq.push(next);
+			has.insert(next);
+			pq_max = max(pq_max, next);
 		}
 	}
 	cout << ans << endl;
 	return 0;
 } 
+
