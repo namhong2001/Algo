@@ -1,6 +1,10 @@
+RANGE=1000000001;
+
 while [[ $? == 0 ]]; do
-  ./test1 > input.txt 
-  ./11495_1 < input.txt > output_1.txt
-  ./test < input.txt > output_2.txt
-  diff -b ./output_1.txt ./output_2.txt
+  RAND1=($RANDOM % $RANGE);
+  RAND2=($RANDOM % $RANGE); 
+  echo "$RAND1 $RAND2" > in2
+  ./sol < in2 > ji.txt
+  ./sol2 < in2 > nh.txt
+  diff -b ./ji.txt ./nh.txt
 done
