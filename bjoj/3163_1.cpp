@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,47 +15,28 @@ int main() {
 	while (T--) {
 		int N, L, K; 
 		cin >> N >> L >> K;
-		priority_queue<pii, vector<pii>, greater<pii>> pq;
+		vector<pii> order;
 		vector<int> ids(N);
 		for (int i=0; i<N; ++i) { 
 			int p, id;
 			cin >> p >> id;
 			ids[i] = id;
 			if (id < 0) { 
-				pq.emplace(p, -1);
+				order.emplace_back(p, id);
 			} else {
-				pq.emplace(L-p, 1);
+				order.emplace_back(L-p, id);
 			}
 		}
+		sort(order.begin(), order.end());
 		int left = 0;
 		int right = N-1;
-		int ith = 0;
-		while (!pq.empty()) {
-			pii cur = pq.top();
-			pq.pop();
-			int dist = cur.first;
-			int id = cur.second < 0 ? ids[left++] : ids[right--];
-			if (!pq.empty()) {
-				pii next = pq.top(); 
-				if (next.first == dist) {
-					int next_id = next.second < 0 ? ids[left] : ids[right];
-					if (next_id < id) {
-						pq.pop();
-						next.second < 0 ? left-- : right++;
-						ith++;
-						if (ith == K) {
-							cout << next_id << '\n';
-							break;
-						}
-					}
-				}
-			}
-			ith++;
-			if (ith == K) {
-				cout << id << '\n';
-				break;
-			}
+		vector<pii> fall;
+		for (int i=0; i<min(K+1, N); ++i) {
+			order[i].second < 0 ?  fall.emplace_back(order[i].first, ids[left++])
+				: fall.emplace_back(order[i].first, ids[right--]);
 		}
-	}
+		sort(fall.begin(), fall.end());
+		cout << fall[K-1].second << '\n';
+	} 
 	return 0;
 } 

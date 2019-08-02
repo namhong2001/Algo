@@ -1,35 +1,44 @@
 #include <iostream>
-#include <vector>
-#include <map>
 #include <cmath>
-using namespace std;
+#include <iomanip>
+
+using namespace std; 
+
+typedef long double ld;
+
+const ld PI = acos(-1);
+
+ld L, N, C;
+ld L2;
+
+bool decision(double rad) {
+	ld rad2 = rad/2;
+	ld r = L/2/sin(rad2);
+	ld arc = r*rad;
+	return arc <= L2;
+} 
 
 int main() {
-    int n, k;
-    while(scanf("%d%d", &n, &k)!=EOF) {
-        map<long long, long long> primes;
-        for(int i=2; i*i<=k; ++i) {
-            while(k%i==0) {
-                primes[i]++;
-                k/=i;
-            }
-        }
-        if(k>1)
-            primes[k]++;
-        long long ret=1;
-        for(auto &prime:primes) {
-            long long sum=0;
-            if(prime.first>n)
-                break;
-            for(int p=prime.first; p<=n; p*=prime.first) {
-                sum+=n/p;
-            }
-            for(int i=0; i<min(sum, prime.second); ++i) {
-                ret*=prime.first;
-            }
-        }
-        cout<<ret<<'\n';
-    }
-    //std::cout << "Hello, World!" << std::endl;
-    return 0;
-}
+	while (true) {
+		cin >> L >> N >> C;
+		if (L < 0) break;
+		L2 = (1.0+N*C)*L;
+		ld l = 0, r = PI;
+		for (int i=0; i<1000; ++i) {
+			ld mid = (l+r)/2;
+			if (decision(mid)) {
+				l = mid;
+			} else {
+				r = mid;
+			}
+		} 
+		cerr << l << endl;
+		ld radius = L/2/sin(l/2);
+		cerr << radius << endl;
+		ld ans = radius - radius*cos(l/2);
+		cerr << ans << endl;
+		cout << fixed << setprecision(3) << ans << '\n';
+	}
+	return 0;
+} 
+
