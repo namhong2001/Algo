@@ -65,7 +65,44 @@ double ccw(const vector2& P, const vector2& A, const vector2& B) {
 	return (A-P).cross(B-P);
 }
 
+double lineIntersection(vector2 a, vector2 b, vector2 c, vector2 d, vector2& x) {
+	double det = (b-a).cross(d-c);
+	if (fabs(det) < EPSILON) return false;
+	x = a + (b-a) * ((c-a).cross(d-c) / det);
+	return true;
+}
 
+bool parallelSegments(vector2 a, vector2 b, vector2 c, vector2 d, vector2& p) {
+	if (b<a) swap(a, b);
+	if (d<c) swap(c, d);
+	if (ccw(a, b, c) != 0 || b<c || d<a) return false;
+	if (a<c) p=c; else p=a;
+	return true;
+}
+
+bool inBoundingRectangle(vector2 p, vector2 a, vector2 b) {
+	if (b<a) swap(a, b);
+	return p == a || p == b || (a < p && p < b); 
+}
+
+bool segmentIntersection(vector2 a, vector2 b, vector2 c, vector2 d, vector2& p) {
+	if (!lineIntersection(a, b, c, d, p)) {
+		return parallelSegments(a, b, c, d, p);
+	}
+	return inBoundingRectangle(p, a, b) && inBoundingRectangle(p, c, d);
+} 
+
+bool segmentIntersects(vector2 a, vector2 b, vector2 c, vector2 d) {
+	double ab = ccw(a, b, c) * ccw(a, b, d);
+	double cd = ccw(c, d, a) * ccw(c, d, b);
+
+	if (ab == 0 && cd == 0) {
+		if (b < a) swap(a, b);
+		if (d < c) swap(c, d);
+		return !(b<c || d<a);
+	}
+	return ab<=0 && cd<=0;
+}
 
 int main() { 
 
