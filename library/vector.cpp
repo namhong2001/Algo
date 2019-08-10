@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <cassert>
 
 using namespace std;
 
@@ -104,8 +105,23 @@ bool segmentIntersects(vector2 a, vector2 b, vector2 c, vector2 d) {
 	return ab<=0 && cd<=0;
 }
 
-int main() { 
+vector2 perpendicularFoot(vector2 p, vector2 a, vector2 b) {
+	return a + (p-a).project(b-a);
+}
 
+double pointToLine(vector2 p, vector2 a, vector2 b) {
+	return (p-perpendicularFoot(p, a, b)).magnitude();
+}
+
+double pointToLine2(vector2 p, vector2 a, vector2 b) {
+	return fabs((p-a).cross((b-a).unit()));
+}
+			
+int main() { 
+	vector2 p(123, 5123);
+	vector2 a(7762, 111);
+	vector2 b(882, 134);
+	assert(fabs(pointToLine(p, a, b) - pointToLine2(p, a, b)) < EPSILON);
 	return 0;
 }
 

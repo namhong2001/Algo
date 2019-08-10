@@ -7,20 +7,14 @@ using namespace std;
 
 int main() {
     srand(time(0));
-	cout << 1 << '\n';
-	int square[4]; 
-    for (int i=0; i<4; ++i) {
-		square[i] = rand() % 20000 - 10000;
-    }
-	sort(square, square+4);
-    for (int i=0; i<4; ++i) {
-		cout << square[i] << ' ';
-    }
-	cout << '\n';
-
+	cout << "1 1"<< '\n';
     for (int i=0; i<4; ++i) {
 		cout << (rand() % 20000 - 10000) << ' ';
     } 
-    cout << ' ';
+	cout << '\n'; 
+    for (int i=0; i<4; ++i) {
+		cout << (rand() % 20000 - 10000) << ' ';
+    } 
+    cout << '\n';
     return 0;
 }
