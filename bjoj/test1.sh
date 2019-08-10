@@ -1,6 +1,8 @@
 while [[ $? == 0 ]]
 do
-	./test > input.txt 
-	./sol < input.txt > /dev/null
+	./make_input > input.txt 
+	./sol < input.txt > myout.txt
+	./test < input.txt > ans.txt
+	diff myout.txt ans.txt
 done
 
