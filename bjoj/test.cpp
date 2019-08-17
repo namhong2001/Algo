@@ -1,74 +1,40 @@
 #include <cstdio>
+#include <iostream>
 #include <cmath>
-#include <algorithm>
 using namespace std;
- 
-// 점 x, y 사이의 거리
-inline double distance(double x1, double y1, double x2, double y2){
-    return sqrt(pow(x1-x2, 2) + pow(y1-y2, 2));
-}
- 
-// 벡터 x, y의 내적
-inline double dot(double x1, double y1, double x2, double y2){
-    return x1*x2 + y1*y2;
-}
- 
-// 벡터 x, y의 외적
-inline double cross(double x1, double y1, double x2, double y2){
-    return x1*y2 - x2*y1;
-}
- 
-// 선분 12에 점 3에서 수선의 발을 내릴 수 있으면 수선의 길이, 아니면 -1 리턴
-inline double perpendicular(double x1, double y1, double x2, double y2, double x3, double y3){
-    double dot1 = dot(x2-x1, y2-y1, x3-x1, y3-y1);
-    double dot2 = dot(x1-x2, y1-y2, x3-x2, y3-y2);
-    // 점 3이 선분 12와 예각 2개를 이루면 수선을 내릴 수 있음
-    if(dot1*dot2 >= 0)
-        return abs(cross(x2-x1, y2-y1, x3-x1, y3-y1)) / distance(x1, y1, x2, y2);
-    return -1;
-}
- 
-int main(){
-    int N, M;
-    double yx[4000], yy[4000], result = -1;
-    scanf("%d %d", &N, &M);
- 
-    // 신촌의 도로 입력
-    for(int i=0; i<N*2; i++)
-        scanf("%lf %lf", yx+i, yy+i);
- 
-    // 안암의 도로 입력
-    for(int i=0; i<M; i++){
-        double x1, y1, x2, y2, x3, y3, x4, y4;
-        scanf("%lf %lf %lf %lf", &x3, &y3, &x4, &y4);
- 
-        // 입력받자마자 신촌의 모든 도로들과 거리를 잰다.
-        for(int j=0; j<N; j++){
-            // 신촌의 한 도로 12, 안암의 도로 34
-            x1 = yx[j*2];
-            x2 = yx[j*2+1];
-            y1 = yy[j*2];
-            y2 = yy[j*2+1];
- 
-            // 먼저 모든 점 쌍 사이의 거리가 후보가 될 수 있음
-            double dist = distance(x1, y1, x3, y3), temp;
-            dist = min(dist, distance(x1, y1, x4, y4));
-            dist = min(dist, distance(x2, y2, x3, y3));
-            dist = min(dist, distance(x2, y2, x4, y4));
- 
-            // 어느 점에서 다른 선분에 수선을 내릴 수 있으면 수선의 길이도 후보
-            temp = perpendicular(x1, y1, x2, y2, x3, y3);
-            if(temp >= 0) dist = min(dist, temp);
-            temp = perpendicular(x1, y1, x2, y2, x4, y4);
-            if(temp >= 0) dist = min(dist, temp);
-            temp = perpendicular(x3, y3, x4, y4, x1, y1);
-            if(temp >= 0) dist = min(dist, temp);
-            temp = perpendicular(x3, y3, x4, y4, x2, y2);
-            if(temp >= 0) dist = min(dist, temp);
- 
-            if(result < 0) result = dist;
-            else result = min(result, dist);
-        }
+typedef double DB;
+DB PI=acos(-1.0);
+DB Area(DB x1,DB y1,DB r1,DB x2,DB y2,DB r2)
+{
+    double d=sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+    if(d>=r1+r2)
+        return 0;
+    else if(fabs(r1-r2)>=d)
+    {
+        if(r1>r2)
+            return PI*r2*r2;
+        else
+            return PI*r1*r2;
     }
-    printf("%.10lf\n", result);
+    else
+    {
+        //正弦定理求扇形圆心角
+        double a1=2*acos((r1*r1+d*d-r2*r2)/2/r1/d);
+        double a2=2*acos((r2*r2+d*d-r1*r1)/2/r2/d);
+        //两个扇形面积和减去四边形的面积即为相交区域面积
+        //四边形面积再转化为两个三角形的面积之和来计算
+        double ans=r1*r1*a1/2+r2*r2*a2/2-r1*r1*sin(a1)/2-r2*r2*sin(a2)/2;
+        return ans;
+    }
 }
+int main()
+{
+    double x1,y1,r1,x2,y2,r2;
+    while(cin>>x1>>y1>>r1>>x2>>y2>>r2)
+    {
+        printf("%.3lf\n",Area(x1,y1,r1,x2,y2,r2));
+    }
+    return 0;
+}
+
+
