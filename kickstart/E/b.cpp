@@ -4,12 +4,12 @@
 #include <numeric>
 #include <set>
 
-using namespace std;
+using namespace std; 
 
 struct Slot {
     int c, e;
     bool operator > (const Slot& rhs) const {
-        return 1.0*c/e > 1.0*rhs.c/rhs.e;
+        return c*rhs.e > rhs.c*e; // c/e > rhs.c/rhs.e
     }
 };
     
@@ -36,12 +36,14 @@ int main() {
         }
         cout << "Case #" << t << ": ";
         for (int i=0; i<D; ++i) {
+			cout << '\n';
             int a, b;
             cin >> a >> b;
             if (a > cpsum.back() || b > epsum.back()) {
                 cout << "N";
                 continue;
             } 
+			/*
             if (a == cpsum.back()) {
                 if(b > 0) cout << "N";
                 else cout << "Y"; 
@@ -52,13 +54,17 @@ int main() {
                 else cout << "Y"; 
                 continue;
             }
+			*/
             auto lower = prev(upper_bound(cpsum.begin(), cpsum.end(), a));
             int lower_index = lower-cpsum.begin(); 
             int need_a = a - *lower;
+			int cur_esum = epsum.back() - epsum[lower_index];
             int cur_index = lower_index+1; 
-            double plus_b = 1.0*(slots[cur_index].c-need_a)/slots[cur_index].c*slots[cur_index].e;
-            double max_b = plus_b + epsum.back() - epsum[cur_index];
-            if (max_b >= b) cout << "Y";
+			int cur_c = slots[cur_index].c;
+			int cur_e = slots[cur_index].e;
+            int plus_b = (cur_c-need_a)*cur_e/cur_c;
+            int max_b = plus_b + epsum.back() - epsum[cur_index];
+            if (1ll*(cur_c-need_a)*cur_e + 1ll*(epsum.back()-epsum[cur_index])*cur_c >= 1ll*b*cur_c) cout << "Y";
             else cout << "N"; 
         } 
         cout << '\n';
