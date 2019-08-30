@@ -1,26 +1,29 @@
 #include <iostream>
 #include <vector>
-#include <unordered_set>
 
 using namespace std;
 
 typedef pair<int,int> pii;
 
 vector<int> arr;
-unordered_set<pii> palindrome;
+vector<int> palindrome(4000, 0); // key = s+e, value = e-s
 int N, M; 
 
-void add(int a, int b) {
-	if (a < 0 || b >= N) return;
+void add(int a, int b) { 
+	if (a < 1 || b > N) return;
 	if (arr[a] == arr[b]) {
-		palindrome.emplace(a, b);
+		palindrome[a+b] = b-a;
 		add(a-1, b+1);
 	}
 } 
 
-void add_palindrome(int start) {
+void cal_palindrome(int start) {
 	add(start, start);
 	add(start, start+1);
+}
+
+bool is_palindrome(int s, int e) {
+	return palindrome[s+e] >= e-s;
 }
 
 int main() { 
@@ -28,20 +31,19 @@ int main() {
 	cin.tie(nullptr);
 	cout.tie(nullptr);
 	cin >> N;
-	arr.resize(N);
-	for (int i=0; i<N; ++i) {
+	arr.resize(N+1);
+	for (int i=1; i<=N; ++i) {
 		cin >> arr[i];
 	}
-	for (int i=0; i<N; ++i) {
-		add_palindrome(i);
+	for (int i=1; i<=N; ++i) {
+		cal_palindrome(i);
 	}
 	int M;
 	cin >> M;
 	for (int i=0; i<M; ++i) {
 		int s, e;
-		cin >> s >> e;
-		s--, e--;
-		cout << (palindrome.find({s, e}) == palindrome.end() ? 0 : 1) << '\n';
+		cin >> s >> e; 
+		cout << (is_palindrome(s, e) ? 1 : 0) << '\n';
 	} 
     return 0;
 }
