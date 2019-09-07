@@ -1,6 +1,6 @@
 shopt -s extglob dotglob nullglob
 
-for file in ~/Downloads/patrik/*.in.*; 
+for file in ~/Downloads/zapis/*.in.*; 
 do
   output=`echo "$file" | sed -e 's/in/out/'`
 # output="${file}"
