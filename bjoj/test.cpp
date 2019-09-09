@@ -1,26 +1,23 @@
-#include<iostream>
-
+#include <bits/stdc++.h>
 using namespace std;
-
-long long dp[101][101][101];
-
+typedef long long ll;
+struct jew{
+	int m, v;
+} J[300010];
+int n, k, C[300010], bck=1;
+ll ans;
+priority_queue<int> Q;
 int main(){
-
-	int N, L, R;
-
-	scanf("%d %d %d", &N, &L, &R);
-
-	dp[1][1][1] = 1;
-
-	for(int i=2; i<=N; i++){
-		for(int j=1; j<=L; j++){
-			for(int k=1; k<=R; k++){
-				dp[i][j][k] = dp[i-1][j][k]*(i-2) + dp[i-1][j-1][k] + dp[i-1][j][k-1];
-				dp[i][j][k] %= 1000000007;
-			}
-		}
+    ios_base::sync_with_stdio(0), cin.tie(0);
+    cin>>n>>k;
+    for(int i=1; i<=n; i++) cin>>J[i].m>>J[i].v;
+    for(int i=1; i<=k; i++) cin>>C[i];
+    sort(C+1, C+k+1);
+    sort(J+1, J+n+1, [](jew a, jew b){ return a.m<b.m; });
+    for(int i=1; i<=k; i++){
+    	while(bck<=n && J[bck].m<=C[i]) Q.push(J[bck].v), bck++;
+    	if(!Q.empty()) ans+=Q.top(), Q.pop();
 	}
-
-	printf("%lld\n", dp[N][L][R]);
-	return 0;
+	cout<<ans;
+    return 0;
 }
