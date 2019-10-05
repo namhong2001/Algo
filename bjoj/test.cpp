@@ -1,23 +1,52 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
 using namespace std;
+
 typedef long long ll;
-struct jew{
-	int m, v;
-} J[300010];
-int n, k, C[300010], bck=1;
-ll ans;
-priority_queue<int> Q;
-int main(){
-    ios_base::sync_with_stdio(0), cin.tie(0);
-    cin>>n>>k;
-    for(int i=1; i<=n; i++) cin>>J[i].m>>J[i].v;
-    for(int i=1; i<=k; i++) cin>>C[i];
-    sort(C+1, C+k+1);
-    sort(J+1, J+n+1, [](jew a, jew b){ return a.m<b.m; });
-    for(int i=1; i<=k; i++){
-    	while(bck<=n && J[bck].m<=C[i]) Q.push(J[bck].v), bck++;
-    	if(!Q.empty()) ans+=Q.top(), Q.pop();
+
+const ll INF = 987654321987;
+
+int N, M;
+int d[501][501];
+vector<int> A, B;
+
+void trackback(int n, int m, int len, ll last) { 
+	//cerr << "{" << n << ", " << m << ", " << len << ", " << last << "}" << endl;
+	if (len == 0) return;
+	for (int j=m; j>=0; --j) { 
+		//if (d[n][j] == len) cerr << n << " " << j << " " << B[j] << endl;
+		if (d[n][j] == len && (ll)B[j] < last) { 
+			while (d[n][j] == len) n--;
+			trackback(n, j-1, len-1, B[j]);
+			cout << B[j] << ' ';
+			break;
+		}
 	}
-	cout<<ans;
-    return 0;
+} 
+
+int main() { 
+	cin >> N;
+	A.resize(N+1);
+	for (int i=1; i<=N; ++i) cin >> A[i];
+	cin >> M;
+	B.resize(M+1);
+	for (int i=1; i<=M; ++i) cin >> B[i];
+
+	for (int i=1; i<=N; ++i) {
+		int max_prefix = 0;
+		int cur_num = A[i];
+		for (int j=1; j<=M; ++j) { 
+			d[i][j] = d[i-1][j];
+			if (cur_num == B[j]) d[i][j] = max_prefix+1;
+			if (cur_num > B[j]) max_prefix = max(max_prefix, d[i-1][j]);
+		}
+	}
+	int len = *max_element(d[N]+1, d[N]+M+1); 
+	cout << len << '\n';
+	trackback(N, M, len, INF); 
+	return 0;
 }
+
+
