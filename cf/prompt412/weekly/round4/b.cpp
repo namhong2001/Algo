@@ -10,6 +10,7 @@ int main() {
     for (int i=0; i<=100; ++i) {
         if (N-i*P < 0) break;
         if ((N-i*P) % Q == 0) {
+            cout << i + (N-i*P)/Q << '\n';
             int cnt = i;
             int s = 0;
             while (cnt--) {
