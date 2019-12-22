@@ -10,7 +10,7 @@
                 "-Wall",
                 "-Wextra",
                 "-o",
-                "sol",
+                "${fileDirname}/sol",
                 "${file}"
             ],
             "group": {
