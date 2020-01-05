@@ -1,52 +1,46 @@
+/*
+[BOJ] 1543. 문서검색
+*/  
 #include <iostream>
-#include <algorithm>
 #include <vector>
-
+#include <cstring>
 using namespace std;
+#define io ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
 
-typedef long long ll;
+string str, word;
+bool check[2501];
 
-const ll INF = 987654321987;
+int main()
+{
+    io;
+    getline(cin, str);
+    getline(cin, word);
+    int wlen = word.length(), cnt = 0, ans = 0, slen = str.length();
+    if(wlen > slen){
+        cout<<"0\n";
+        return 0;
+    }
+    for(int i=0;i<slen;i++){
+        if(str[i] == word[cnt]){
+            if(cnt == wlen - 1) {
+                ans++;
+                cnt = 0;
+                continue;
+            } else if(str[i+1] != word[cnt+1]) {
+                cnt = 0;
+                if(str[i] == word[cnt]) cnt++;
+                continue;
+            }
+            check[i] += 1;
+            cnt++;
+        }else{
+            cnt = 0;
+            if(str[i] == word[cnt]){
+                cnt++;
+            }
+        }
+    }
+    cout<<ans<<"\n";
 
-int N, M;
-int d[501][501];
-vector<int> A, B;
-
-void trackback(int n, int m, int len, ll last) { 
-	//cerr << "{" << n << ", " << m << ", " << len << ", " << last << "}" << endl;
-	if (len == 0) return;
-	for (int j=m; j>=0; --j) { 
-		//if (d[n][j] == len) cerr << n << " " << j << " " << B[j] << endl;
-		if (d[n][j] == len && (ll)B[j] < last) { 
-			while (d[n][j] == len) n--;
-			trackback(n, j-1, len-1, B[j]);
-			cout << B[j] << ' ';
-			break;
-		}
-	}
-} 
-
-int main() { 
-	cin >> N;
-	A.resize(N+1);
-	for (int i=1; i<=N; ++i) cin >> A[i];
-	cin >> M;
-	B.resize(M+1);
-	for (int i=1; i<=M; ++i) cin >> B[i];
-
-	for (int i=1; i<=N; ++i) {
-		int max_prefix = 0;
-		int cur_num = A[i];
-		for (int j=1; j<=M; ++j) { 
-			d[i][j] = d[i-1][j];
-			if (cur_num == B[j]) d[i][j] = max_prefix+1;
-			if (cur_num > B[j]) max_prefix = max(max_prefix, d[i-1][j]);
-		}
-	}
-	int len = *max_element(d[N]+1, d[N]+M+1); 
-	cout << len << '\n';
-	trackback(N, M, len, INF); 
-	return 0;
+    return 0;
 }
-
-
