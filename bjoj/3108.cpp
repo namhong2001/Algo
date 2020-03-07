@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <numeric>
+#include <algorithm>
+#include <set>
 
 using namespace std;
 
@@ -13,15 +15,13 @@ struct Square {
     if (y2 != rhs.y2) return y2 < rhs.y2;
     return false;
   }
-  bool overlap (const Square &rhs) const {
-    if (rhs < *this) rhs.overlap(*this);
-    return x1 < rhs.x1 && y1 < rhx.y1
-    
-  }
   bool intersect (const Square &rhs) const {
     if (rhs < *this) rhs.intersect(*this);
-    if (x1 == rhs.x1 || )
-    return (x2 >= rhs.x1 && y2 >= rhs.y1) || (rhs.x2 >= x1 && rhs.y2 >= y1);
+    if (x2 < rhs.x1) return false;
+    if (rhs.y2 < y1) return false;
+    if (rhs.y1 > y2) return false;
+    if (x1 < rhs.x1 && x2 > rhs.x2 && y2 > rhs.y2 && y1 < rhs.y1) return false;
+    return true;
   }
 };
 
@@ -47,21 +47,30 @@ int main() {
   iota(r.begin(), r.end(), 0);
 
   vector<Square> arr(N);
-  bool startWithSquare;
+  bool startWithSquare = false;
   for (int i=0; i<N; ++i) {
     int x1, y1, x2, y2;
     cin >> x1 >> y1 >> x2 >> y2;
     arr[i] = {x1, y1, x2, y2};
-    if ((x1 < 0 && y1 == 0) ||
-        (y1 < 0 && x1 == 0) ||
-        (x2 > 0 && y2 == 0) ||
-        (y2 > 0 && x2 == 0))
-    {
-      startWithSquare = true;
+    if (x1 == 0  || x2 == 0) {
+      if (y1 <= 0 && y2 >= 0) startWithSquare = true;
+    }
+    if (y1 == 0  || y2 == 0) {
+      if (x1 <= 0 && x2 >= 0) startWithSquare = true;
     }
   }
+  sort(arr.begin(), arr.end());
   for (int i=0; i<N; ++i) for (int j=i+1; j<N; ++j) {
-
+    if (f(i) != f(j) && arr[i].intersect(arr[j])) {
+      u(i, j);
+    }
   }
+  set<int> components;
+  for (int i=0; i<N; ++i) {
+    components.insert(f(i));
+  }
+  int ans = components.size();
+  if (startWithSquare) ans--;
+  cout << ans;
   return 0;
 }
